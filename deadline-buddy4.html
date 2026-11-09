@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deadline Buddy</title>
+<style>
+
+  /*Ali part  */ 
+
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #f4f5fb; color: #1f2340;
+    font-family: "Segoe UI", Arial, sans-serif; line-height: 1.5;
+  }
+  header { background: #4f46e5; color: #fff; text-align: center; padding: 28px 16px; }
+  header h1 { margin: 0; font-size: 2rem; }
+  header p { margin: 6px 0 0; }
+  main { max-width: 700px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  .card { background: #fff; border-radius: 12px; padding: 18px; margin-bottom: 18px;
+          box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  h2 { margin: 0 0 12px; font-size: 1.15rem; }
+
+  /* Reminder box */
+  .reminder { background: #fff3f1; border-left: 6px solid #dc2626; }
+  .reminder ul { margin: 0; padding-left: 20px; }
+
+  /* Assignment list */
+  .task { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #e3e5f1; }
+  .task:last-child { border-bottom: 0; }
+  .task input { width: 22px; height: 22px; accent-color: #4f46e5; }
+  .task label { flex: 1; font-weight: 600; cursor: pointer; }
+  .task label small { display: block; font-weight: 400; color: #6b7090; }
+  .task input:checked + label { text-decoration: line-through; color: #8b8fa8; }
+
+  .badge { font-size: .75rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+  .red    { background: #fde8e8; color: #dc2626; }
+  .orange { background: #fff0d9; color: #d97706; }
+  .blue   { background: #e3edff; color: #2563eb; }
+
+  /* Add form */
+  .add { display: grid; grid-template-columns: 2fr 1.2fr 1fr auto; gap: 10px; }
+  .add input { border: 1px solid #d5d8ea; border-radius: 8px; padding: 10px; font: inherit; min-width: 0; }
+  .add input:focus { outline: 2px solid #4f46e5; }
+  .add button {
+    background: #4f46e5; color: #fff; border: 0; border-radius: 8px;
+    padding: 10px 20px; font: inherit; font-weight: 600; cursor: pointer;
+  }
+  .add button:hover { background: #3b34b8; }
+
+  @media (max-width: 560px) { .add { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+/* yousif part */
+
+<header>
+  <h1>📚 Deadline Buddy</h1>
+  <p>Track your assignments. Never miss a due date.</p>
+</header>
+
+<main>
+
+  <section class="card reminder">
+    <h2>⏰ Due soon</h2>
+    <ul>
+      <li>Physics lab report: overdue</li>
+      <li>DBMS assignment: due today</li>
+      <li>Maths quiz prep: due in 2 days</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>My assignments</h2>
+    <div id="list">
+
+    <div class="task">
+      <input type="checkbox" id="a1">
+      <label for="a1">Physics lab report <small>Physics · 7 Nov</small></label>
+      <span class="badge red">Overdue</span>
+    </div>
+
+    <div class="task">
+      <input type="checkbox" id="a2">
+      <label for="a2">DBMS assignment <small>Database Systems · 9 Nov</small></label>
+      <span class="badge orange">Due today</span>
+    </div>
+
+    <div class="task">
+      <input type="checkbox" id="a3">
+      <label for="a3">Maths quiz prep <small>Mathematics · 11 Nov</small></label>
+      <span class="badge orange">2 days left</span>
+    </div>
+
+    <div class="task">
+      <input type="checkbox" id="a4">
+      <label for="a4">Design thinking presentation <small>Design Thinking · 15 Nov</small></label>
+      <span class="badge blue">6 days left</span>
+    </div>
+
+    <div class="task">
+      <input type="checkbox" id="a5">
+      <label for="a5">English essay <small>English · 20 Nov</small></label>
+      <span class="badge blue">11 days left</span>
+    </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Add an assignment</h2>
+    <form class="add" id="addForm">
+      <input id="newTitle" placeholder="Assignment title" required>
+      <input id="newSubject" placeholder="Subject" required>
+      <input id="newDate" type="date" required>
+      <button type="submit">+ Add</button>
+    </form>
+  </section>
+
+</main>
+/*Akshat Rangra part */
+<script>
+ 
+  document.getElementById("addForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var title = document.getElementById("newTitle").value.trim();
+    var subject = document.getElementById("newSubject").value.trim();
+    var date = document.getElementById("newDate").value;
+
+    // Days left until the due date
+    var due = new Date(date + "T00:00:00");
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var days = Math.round((due - today) / 86400000);
+    var badgeText, badgeColor;
+    if (days < 0)       { badgeText = "Overdue";        badgeColor = "red"; }
+    else if (days === 0){ badgeText = "Due today";      badgeColor = "orange"; }
+    else if (days <= 2) { badgeText = days + " days left"; badgeColor = "orange"; }
+    else                { badgeText = days + " days left"; badgeColor = "blue"; }
+    var nice = due.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+
+    // Build the new row (same structure as the other assignments)
+    var id = "n" + Date.now();
+    var row = document.createElement("div");
+    row.className = "task";
+
+    var box = document.createElement("input");
+    box.type = "checkbox"; box.id = id;
+
+    var label = document.createElement("label");
+    label.htmlFor = id;
+    label.textContent = title + " ";
+    var small = document.createElement("small");
+    small.textContent = subject + " · " + nice;
+    label.appendChild(small);
+
+    var badge = document.createElement("span");
+    badge.className = "badge " + badgeColor;
+    badge.textContent = badgeText;
+
+    row.append(box, label, badge);
+    document.getElementById("list").appendChild(row);
+    e.target.reset();
+  });
+</script>
+
+</body>
+</html>
